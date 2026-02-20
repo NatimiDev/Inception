@@ -1,5 +1,25 @@
 services:
+  mariadb:
+    build: ./requirements/mariadb
+    env_file: .env
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - inception
+    restart: unless-stopped
+
   nginx:
     build: ./requirements/nginx
     ports:
       - "443:443"
+    networks:
+      - inception
+    restart: unless-stopped
+
+volumes:
+  mariadb:
+    driver: local
+
+networks:
+  inception:
+    driver: bridge
