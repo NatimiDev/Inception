@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by [nmikuka].*
+*This project has been created as part of the 42 curriculum by <nmikuka>.*
 
 ---
 
@@ -80,13 +80,4 @@ make
 - [WordPress WP-CLI guide](https://make.wordpress.org/cli/handbook/)
 
 ### AI Usage
-**Claude (Anthropic)** was used throughout this project for:
-- Setting up the VM and configuring Debian from scratch
-- Writing and debugging Dockerfiles for all three services
-- Writing and debugging shell scripts for MariaDB and WordPress setup
-- Configuring Nginx with TLS and PHP-FPM
-- Writing the docker-compose.yml and understanding networking concepts
-- Understanding design choices (VMs vs Docker, secrets vs env vars, networks, volumes)
-- Writing this README and the documentation files
-
-AI was used as a learning and debugging assistant. All code was reviewed, understood, and adapted by the student.
+**Claude (Anthropic)** was used as a learning and debugging assistant, mainly as debuggind tool, for checking and creating this and other documentation files. All code was reviewed, understood, and adapted by student.
