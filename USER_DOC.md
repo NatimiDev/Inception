@@ -33,7 +33,7 @@ This stops all containers. Your data is preserved.
 ```bash
 make re
 ```
-This stops everything, removes volumes, and starts again from scratch. **Warning: this will delete all WordPress content and database data.**
+This stops everything, removes volumes, and starts again from scratch. **Warning: this will delete all WordPress content and database data. !!!COULD TAKE SOME MINUTES!!!**
 
 ---
 
