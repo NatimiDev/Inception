@@ -1,5 +1,9 @@
 #!/bin/bash
 
+until mysqladmin ping -h mariadb -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do
+    sleep 1
+done
+
 mkdir -p /var/www/html
 cd /var/www/html
 
