@@ -1,4 +1,5 @@
 all:
+	mkdir -p /home/nmikuka/data/mariadb /home/nmikuka/data/wordpress
 	docker compose -f srcs/docker-compose.yml up --build
 
 down:
