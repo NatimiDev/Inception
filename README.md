@@ -51,7 +51,7 @@ For detailed setup and usage instructions, refer to the dedicated documentation 
 
 ### Quick Start
 ```bash
-git clone https://github.com/nmikuka/inception.git
+git clone git@github.com:NatimiDev/inception.git
 cd inception
 cp srcs/.env.example srcs/.env  # fill in your credentials
 mkdir -p /home/nmikuka/data/mariadb /home/nmikuka/data/wordpress
