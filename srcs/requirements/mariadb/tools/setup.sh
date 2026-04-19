@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Only initialize if database doesn't exist yet
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+if [ ! -f "/var/lib/mysql/.inited" ]; then
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
-    mysqld_safe --skip-networking &
-    until mysqladmin ping --silent; do
+    mysqld_safe --datadir=/var/lib/mysql &
+
+    until mysqladmin ping -uroot --silent; do
         sleep 1
     done
 
-    mysql -u root << EOF
+    mysql -uroot << EOF
 CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
 CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
 GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
@@ -17,7 +17,9 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
 FLUSH PRIVILEGES;
 EOF
 
-    mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
+    mysqladmin -uroot shutdown
+
+    touch /var/lib/mysql/.inited
 fi
 
-exec mysqld_safe
+exec mysqld_safe --datadir=/var/lib/mysql
