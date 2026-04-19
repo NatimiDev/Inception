@@ -4,11 +4,16 @@
 
 - UTM or VirtualBox
 - Debian 12 Bookworm VM (20GB disk, 2GB RAM)
-- Docker & Docker Compose
+- Docker CE & Docker Compose V2
 - make
 - git
 
-For full VM setup instructions, see [README.md](README.md).
+Install all at once:
+```bash
+sudo apt install openssh-server git make -y
+```
+
+For Docker CE installation see README.md.
 
 ---
 
@@ -16,8 +21,8 @@ For full VM setup instructions, see [README.md](README.md).
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/nmikuka/inception.git
-cd inception
+git clone git@github.com:NatimiDev/Inception.git
+cd Inception
 ```
 
 ### 2. Create the .env file
@@ -42,20 +47,15 @@ WP_USER_PASSWORD=youruserpassword
 WP_USER_EMAIL=youruser2@student.42.fr
 ```
 
-### 3. Create data directories
-These directories are used as bind mounts for persistent data:
-```bash
-mkdir -p /home/nmikuka/data/mariadb
-mkdir -p /home/nmikuka/data/wordpress
-```
+> **Note:** `WP_ADMIN` must not contain `admin`, `Admin`, `administrator` or `Administrator`.
 
-### 4. Add domain to hosts
+### 3. Add domain to hosts
 ```bash
 sudo nano /etc/hosts
 ```
 Add:
 ```
-127.0.0.1    nmikuka.42.fr
+192.168.64.x    nmikuka.42.fr
 ```
 
 ---
@@ -66,27 +66,28 @@ Add:
 
 | Command | Description |
 |---------|-------------|
-| `make` or `make all` | Build images and start all containers |
+| `make` or `make all` | Build images and start all containers in background |
+| `make dev` | Build and start with live logs in terminal |
 | `make down` | Stop and remove containers |
-| `make re` | Full restart — removes volumes and rebuilds |
+| `make re` | Full restart — cleans everything and rebuilds |
 | `make clean` | Remove containers and images |
-| `make fclean` | Remove everything including volumes |
+| `make fclean` | Remove everything including data directories |
+
+> `make all` automatically creates `/home/nmikuka/data/mariadb` and `/home/nmikuka/data/wordpress` if they don't exist.
 
 ### Using Docker Compose directly
 ```bash
-cd srcs
+# Build and start in background
+docker compose -f srcs/docker-compose.yml up --build -d
 
-# Build and start
-docker compose up --build
-
-# Start in background
-docker compose up --build -d
+# Start with logs
+docker compose -f srcs/docker-compose.yml up --build
 
 # Stop
-docker compose down
+docker compose -f srcs/docker-compose.yml down
 
 # Stop and remove volumes
-docker compose down -v
+docker compose -f srcs/docker-compose.yml down -v
 ```
 
 ---
@@ -114,14 +115,14 @@ docker logs srcs-mariadb-1
 
 ### Follow logs in real time
 ```bash
-docker logs -f srcs-mariadb-1
+docker compose -f srcs/docker-compose.yml logs -f
 ```
 
 ### Rebuild a single service
 ```bash
-docker compose up --build nginx
-docker compose up --build wordpress
-docker compose up --build mariadb
+docker compose -f srcs/docker-compose.yml up --build nginx
+docker compose -f srcs/docker-compose.yml up --build wordpress
+docker compose -f srcs/docker-compose.yml up --build mariadb
 ```
 
 ---
@@ -137,12 +138,6 @@ docker volume ls
 ```bash
 docker volume inspect srcs_mariadb
 docker volume inspect srcs_wordpress
-```
-
-### Remove volumes manually
-```bash
-docker volume rm srcs_mariadb
-docker volume rm srcs_wordpress
 ```
 
 ### Remove all unused volumes
@@ -166,8 +161,6 @@ These are **bind mounts** — Docker maps these host directories directly into t
 To fully reset all data:
 ```bash
 make fclean
-sudo rm -rf /home/nmikuka/data/mariadb/*
-sudo rm -rf /home/nmikuka/data/wordpress/*
 make
 ```
 
@@ -194,7 +187,7 @@ inception/
         │   ├── conf/
         │   │   └── 50-server.cnf
         │   └── tools/
-        │       └── setup.sh
+        │       └── init.sh
         └── wordpress/
             ├── Dockerfile
             ├── conf/
@@ -211,7 +204,7 @@ inception/
 | `srcs/.env` | All credentials and environment variables |
 | `nginx/conf/nginx.conf` | Nginx server config — TLS, PHP-FPM proxy |
 | `mariadb/conf/50-server.cnf` | MariaDB server config — port, bind address |
-| `mariadb/tools/setup.sh` | Initializes database, user, and passwords |
+| `mariadb/tools/init.sh` | Initializes database, user, and passwords on first run |
 | `wordpress/conf/www.conf` | PHP-FPM pool config — listens on port 9000 |
 | `wordpress/tools/setup.sh` | Downloads WordPress, configures and installs it via WP-CLI |
 
@@ -221,13 +214,14 @@ inception/
 
 ### Containers not starting
 ```bash
-docker compose logs
+docker compose -f srcs/docker-compose.yml logs
 ```
 
-### MariaDB access denied
-Make sure your `.env` passwords match. Then do a full reset:
+### MariaDB access denied (error 1045)
+Happens when old data exists with different credentials. Full reset:
 ```bash
-make re
+make fclean
+make
 ```
 
 ### Port 443 already in use
@@ -240,7 +234,7 @@ Kill the process using it or stop any other web server running on the host.
 The PHP location block in `nginx.conf` is commented out. Uncomment it and rebuild nginx.
 
 ### Cannot connect to MariaDB from WordPress
-Check that both containers are on the `inception` network:
+Check that both containers are on the same network:
 ```bash
 docker network inspect srcs_inception
 ```
