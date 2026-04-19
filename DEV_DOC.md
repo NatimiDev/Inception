@@ -55,7 +55,7 @@ sudo nano /etc/hosts
 ```
 Add:
 ```
-192.168.64.x    nmikuka.42.fr
+127.0.0.1    nmikuka.42.fr
 ```
 
 ---
