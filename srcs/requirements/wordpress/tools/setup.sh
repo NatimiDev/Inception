@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "Waiting for MariaDB..."
-
-until mysqladmin ping -h mariadb -uroot -p$MYSQL_ROOT_PASSWORD --silent; do
+for i in $(seq 30); do
+    mysqladmin ping -h mariadb --silent && break
+    echo "Waiting for MariaDB..."
     sleep 1
 done
 
