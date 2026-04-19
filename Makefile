@@ -16,6 +16,7 @@ clean:
 	docker system prune -af
 
 fclean: clean
+	sudo rm -f /home/nmikuka/data/mariadb/.inited
 	sudo rm -rf /home/nmikuka/data/mariadb/*
 	sudo rm -rf /home/nmikuka/data/wordpress/*
 	
