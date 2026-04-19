@@ -3,7 +3,7 @@ set -e
 
 echo "Waiting for MariaDB..."
 
-until mysqladmin ping -h mariadb -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do
+until mysqladmin ping -h mariadb -uroot -p$MYSQL_ROOT_PASSWORD --silent; do
     sleep 1
 done
 
