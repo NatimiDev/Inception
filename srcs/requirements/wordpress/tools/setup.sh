@@ -1,13 +1,22 @@
 #!/bin/bash
+set -e
+
+echo "Waiting for MariaDB..."
 
 until mysqladmin ping -h mariadb -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do
     sleep 1
 done
 
-mkdir -p /var/www/html
+echo "MariaDB is up!"
+
 cd /var/www/html
 
+echo "Current files:"
+ls -la
+
 if [ ! -f "/var/www/html/wp-config.php" ]; then
+    echo "Installing WordPress..."
+
     wp core download --allow-root
 
     wp config create --allow-root \
@@ -26,6 +35,8 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     wp user create --allow-root \
         $WP_USER $WP_USER_EMAIL \
         --user_pass=$WP_USER_PASSWORD
+
+    echo "WordPress installed!"
 fi
 
 exec php-fpm8.2 -F
