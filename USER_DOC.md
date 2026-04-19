@@ -2,59 +2,16 @@
 
 ## What is this project?
 
-This project runs a complete WordPress website using three services:
-
-| Service | Role |
-|---------|------|
-| **Nginx** | Web server — the only entry point, handles secure HTTPS connections |
-| **WordPress** | The website and content management system (CMS) |
-| **MariaDB** | The database that stores all WordPress content |
-
-All services run inside Docker containers on a virtual machine.
-
----
-
-## Starting and Stopping the Project
-
-### Start the project
-```bash
-cd ~/Inception
-make
+This project runs a complete WordPress website accessible at:
 ```
-This will build and start all three services. Wait until you see all containers running.
-
-### Stop the project
-```bash
-make down
+https://nmikuka.42.fr
 ```
-This stops all containers. Your data is preserved.
-
-### Restart fresh
-```bash
-make re
-```
-This stops everything, removes volumes, and starts again from scratch. **Warning: this will delete all WordPress content and database data. !!!COULD TAKE SOME MINUTES!!!**
 
 ---
 
 ## Accessing the Website
 
-### From inside the VM
-Open a browser and go to:
-```
-https://nmikuka.42.fr
-```
-
-### From your host machine (Mac)
-First add the domain to your hosts file:
-```bash
-sudo nano /etc/hosts
-```
-Add:
-```
-192.168.64.x    nmikuka.42.fr
-```
-Then visit:
+Open your browser and go to:
 ```
 https://nmikuka.42.fr
 ```
@@ -70,23 +27,19 @@ Go to:
 https://nmikuka.42.fr/wp-admin
 ```
 
-Log in with the admin credentials from your `.env` file (see below).
+Log in with the admin credentials from your `.env` file.
 
 ---
 
 ## Credentials
 
-All credentials are stored in the `.env` file located at:
+All credentials are stored in:
 ```
 ~/Inception/srcs/.env
 ```
 
 | Variable | Description |
 |----------|-------------|
-| `MYSQL_DATABASE` | WordPress database name |
-| `MYSQL_USER` | Database user for WordPress |
-| `MYSQL_PASSWORD` | Database user password |
-| `MYSQL_ROOT_PASSWORD` | MariaDB root password |
 | `WP_ADMIN` | WordPress admin username |
 | `WP_ADMIN_PASSWORD` | WordPress admin password |
 | `WP_ADMIN_EMAIL` | WordPress admin email |
@@ -98,40 +51,11 @@ All credentials are stored in the `.env` file located at:
 
 ---
 
-## Checking That Services Are Running
+## Checking That the Website Is Running
 
-### Check all containers are up
-```bash
-docker ps
+Open your browser and visit:
 ```
-You should see three containers running:
-- `srcs-nginx-1`
-- `srcs-wordpress-1`
-- `srcs-mariadb-1`
-
-### Check logs for a specific service
-```bash
-docker logs srcs-nginx-1
-docker logs srcs-wordpress-1
-docker logs srcs-mariadb-1
+https://nmikuka.42.fr
 ```
 
-### Check MariaDB is working
-```bash
-docker exec -it srcs-mariadb-1 mysql -u root -p
-```
-Enter your root password, then:
-```sql
-SHOW DATABASES;
-SELECT user, host FROM mysql.user;
-```
-
-### Check WordPress files are present
-```bash
-ls /home/nmikuka/data/wordpress
-```
-
-### Check MariaDB data is present
-```bash
-ls /home/nmikuka/data/mariadb
-```
+If the site loads, everything is working. If not, contact your administrator or refer to the DEV_DOC.md for technical troubleshooting.
